@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>えつのぶくん | ポートフォリオ（ayakatanagura.com風UI再現）</title>
+  <meta name="description" content="ビジュアル戦略で価値を設計するデザイナーのポートフォリオ。UI/UX・WEB制作・ブランド設計まで一気通貫で対応。" />
+  <style>
+    /* ============ CSS RESET (lightweight) ============ */
+    *,*::before,*::after{box-sizing:border-box}
+    html,body{margin:0;padding:0}
+    img{max-width:100%;display:block}
+    a{color:inherit;text-decoration:none}
+    button,input,textarea,select{font:inherit}
+    /* ============ THEME TOKENS ============ */
+    :root{
+      --bg:#ffffff;
+      --fg:#0f172a;            /* slate-900 */
+      --muted:#475569;         /* slate-600 */
+      --line:#e2e8f0;          /* slate-200 */
+      --card:#ffffff;
+      --accent:#0f172a;
+      --accent-contrast:#ffffff;
+      --chip:#f1f5f9;          /* slate-100 */
+      --shadow:0 10px 30px rgba(2,6,23,.08);
+      --radius:18px;
+      --radius-lg:24px;
+      --container:1160px;
+      --space:clamp(40px,6vw,88px);
+      --brand:#ef546b;         /* ピンク系（CTA） */
+      --brand-ink:#ffffff;
+      --ink:#0b1220;
+    }
+    body{background:var(--bg);color:var(--fg);font-family:-apple-system,BlinkMacSystemFont,'Hiragino Kaku Gothic ProN','Noto Sans JP',Segoe UI,Roboto,Helvetica,Arial,ui-sans-serif;line-height:1.6}
+    .container{max-width:var(--container);margin-inline:auto;padding-inline:20px}
+    .section{padding-block:var(--space)}
+    .section + .section{border-top:1px solid var(--line)}
+    h1,h2,h3{line-height:1.25;margin:0 0 .5em}
+    h1{font-size:clamp(28px,4vw,44px);font-weight:800}
+    h2{font-size:clamp(22px,3vw,30px);font-weight:700}
+    h3{font-size:clamp(18px,2.2vw,20px);font-weight:700}
+    p{color:var(--muted);margin:0 0 1em}
+    /* ============ HEADER ============ */
+    .header{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.86);backdrop-filter:saturate(180%) blur(8px);border-bottom:1px solid var(--line)}
+    .header-wrap{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;max-width:var(--container);margin-inline:auto}
+    .brand{font-weight:700;font-size:20px;letter-spacing:.2px}
+    nav ul{display:flex;gap:24px;align-items:center;margin:0;padding:0;list-style:none}
+    .cta{display:inline-flex;align-items:center;gap:.5rem;padding:.55rem .9rem;border-radius:999px;border:1px solid var(--fg);transition:.2s}
+    .cta:hover{background:var(--accent);color:var(--accent-contrast)}
+    .nav-link{opacity:.9}
+    .nav-link:hover{opacity:.6}
+    .burger{display:none}
+    /* ============ HERO ============ */
+    .hero{position:relative;overflow:hidden}
+    .hero-bg{position:absolute;inset:0;z-index:-1;background:
+      radial-gradient(800px 400px at 20% 20%, #f1f5f9 0%, transparent 60%),
+      radial-gradient(600px 300px at 80% 30%, #e2e8f0 0%, transparent 60%),
+      radial-gradient(700px 350px at 60% 80%, #f8fafc 0%, transparent 60%);
+    }
+    .hero-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:32px;align-items:center}
+    .hero-img{aspect-ratio:1/1;border-radius:var(--radius-lg);background:#f1f5f9;box-shadow:inset 0 1px 0 rgba(0,0,0,.04)}
+    .pill{display:inline-flex;align-items:center;gap:.5rem;padding:.55rem 1rem;border-radius:999px;background:var(--fg);color:#fff;font-weight:600}
+    .btn{display:inline-flex;align-items:center;gap:.6rem;padding:.7rem 1.1rem;border-radius:999px;border:1px solid var(--fg);font-weight:600;transition:.2s}
+    .btn.primary{background:var(--fg);color:#fff;border-color:transparent}
+    .btn:hover{transform:translateY(-1px);box-shadow:var(--shadow)}
+    .btn + .btn{margin-left:.6rem}
+    /* ============ PROFILE CARDS ============ */
+    .grid{display:grid;gap:20px}
+    .grid.two{grid-template-columns:2fr 3fr}
+    .grid.auto-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:22px}
+    .list{padding-left:1.2em}
+    .list li{margin:.35em 0;color:var(--muted)}
+    /* ============ WORKS ============ */
+    .tabs{display:flex;flex-wrap:wrap;gap:10px}
+    .chip{padding:.5rem .9rem;border-radius:999px;border:1px solid var(--fg);background:transparent;cursor:pointer;font-weight:600}
+    .chip.active,.chip:hover{background:var(--fg);color:#fff}
+    .work-grid{display:grid;gap:18px;grid-template-columns:repeat(3,minmax(0,1fr));margin-top:22px}
+    .work{border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:#fff;transition:box-shadow .2s, transform .2s}
+    .work:hover{box-shadow:var(--shadow);transform:translateY(-2px)}
+    .work-thumb{aspect-ratio:4/3;background:#f1f5f9}
+    .work-body{padding:14px}
+    .tag{font-size:12px;background:var(--chip);border-radius:999px;padding:.2rem .55rem}
+    /* ============ BLOG ============ */
+    .blog-grid{display:grid;gap:18px;grid-template-columns:repeat(3,minmax(0,1fr));margin-top:18px}
+    .article{border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:#fff;transition:box-shadow .2s}
+    .article:hover{box-shadow:var(--shadow)}
+    .hero-16x9{aspect-ratio:16/9;background:#f1f5f9}
+    .article-body{padding:16px}
+    /* ============ CONTACT ============ */
+    .contact-grid{display:grid;gap:28px;grid-template-columns:1fr 1fr;align-items:start}
+    .input,.textarea{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:#fff}
+    .textarea{min-height:140px;resize:vertical}
+    .submit{width:100%;padding:12px;border:none;border-radius:12px;background:var(--fg);color:#fff;font-weight:700;cursor:pointer}
+    /* ============ FOOTER ============ */
+    .footer{border-top:1px solid var(--line)}
+    .footer-wrap{display:flex;gap:16px;align-items:center;justify-content:space-between;padding:20px}
+    /* ============ RESPONSIVE ============ */
+    @media (max-width: 980px){
+      .hero-grid{grid-template-columns:1fr}
+      .grid.two{grid-template-columns:1fr}
+      .blog-grid{grid-template-columns:1fr 1fr}
+      .work-grid{grid-template-columns:1fr 1fr}
+      .contact-grid{grid-template-columns:1fr}
+      nav ul{display:none}
+      .burger{display:inline-flex;gap:8px;align-items:center;border:1px solid var(--fg);border-radius:10px;padding:8px}
+    }
+    @media (max-width: 640px){
+      .blog-grid,.work-grid{grid-template-columns:1fr}
+    }
+    /* Placeholder image (fine checker) */
+    .ph{
+      width:100%;height:100%;
+      background:
+       linear-gradient(45deg,rgba(0,0,0,.05) 25%,transparent 25%) -10px 0/20px 20px,
+       linear-gradient(-45deg,rgba(0,0,0,.05) 25%,transparent 25%) -10px 0/20px 20px,
+       linear-gradient(45deg,transparent 75%,rgba(0,0,0,.05) 75%) -10px 0/20px 20px,
+       linear-gradient(-45deg,transparent 75%,rgba(0,0,0,.05) 75%) -10px 0/20px 20px,
+       #fafafa;
+    }
+
+    /* --- Modal (lightbox preview) for Works --- */
+    .modal-backdrop{
+      position:fixed;inset:0;background:rgba(2,6,23,.55);
+      display:none;align-items:center;justify-content:center;z-index:1000;
+    }
+    .modal-backdrop[aria-hidden="false"]{display:flex}
+    .modal{
+      width:min(96vw,1200px);height:min(90vh,760px);
+      background:#111;border-radius:16px;overflow:hidden;
+      box-shadow:0 20px 60px rgba(0,0,0,.35);
+      display:grid;grid-template-rows:auto 1fr;
+    }
+    .modal-header{
+      display:flex;align-items:center;justify-content:space-between;
+      padding:10px 12px;background:#0b1220;color:#e5e7eb;border-bottom:1px solid #1f2937;
+    }
+    .modal-title{font-weight:700;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .modal-actions{display:flex;gap:8px}
+    .modal-btn{
+      border:1px solid #334155;background:#111827;color:#e5e7eb;
+      padding:6px 10px;border-radius:10px;cursor:pointer;
+    }
+    .modal-btn:hover{background:#1f2937}
+    .modal-body{position:relative}
+    .modal-iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:#0b1220}
+    @media (max-width:640px){.modal{width:96vw;height:88vh;border-radius:12px}}
+
+    /* --- Profile detail sheet (white card modal) --- */
+    .profile-backdrop{position:fixed;inset:0;background:rgba(2,6,23,.55);display:none;align-items:center;justify-content:center;z-index:1100}
+    .profile-backdrop[aria-hidden="false"]{display:flex}
+    .profile-sheet{
+      width:min(96vw,720px);max-height:90vh;overflow:auto;background:#fff;border-radius:24px;
+      box-shadow:0 20px 60px rgba(0,0,0,.25);padding:18px 18px 24px;
+    }
+    .sheet-header{position:sticky;top:0;background:linear-gradient(#f8fafc,#fff 30%);padding:16px 12px;border-bottom:1px dashed #e5e7eb;border-top-left-radius:16px;border-top-right-radius:16px;z-index:1}
+    .sheet-close{float:right;border:1px solid #cbd5e1;background:#fff;border-radius:12px;padding:6px 10px;cursor:pointer}
+    .sheet-close:hover{background:#f8fafc}
+    .sheet-body{padding:8px 8px 0}
+    .avatar-wrap{width:120px;height:120px;border-radius:999px;background:#fff;box-shadow:0 6px 20px rgba(2,6,23,.1);margin:10px auto;position:relative}
+    .avatar-wrap img{width:100%;height:100%;object-fit:cover;border-radius:999px}
+    .status-dot{
+      position:absolute;right:6px;bottom:6px;width:20px;height:20px;border-radius:999px;background:var(--brand);border:4px solid #fff;box-shadow:0 2px 6px rgba(239,84,107,.35)
+    }
+    .name{font-size:28px;font-weight:800;color:#0b1220;text-align:center;margin-top:6px}
+    .role{color:#6b7280;text-align:center;margin:6px 0 14px}
+    .dotted{height:1px;border-bottom:2px dotted #e5e7eb;margin:18px 0}
+    .sns{display:flex;gap:14px;justify-content:center;align-items:center}
+    .sns a{display:inline-flex;width:36px;height:36px;border-radius:999px;background:#0b2530;color:#e5e7eb;align-items:center;justify-content:center}
+    .info{display:grid;grid-template-columns:auto 1fr;gap:12px 16px;margin-top:18px}
+    .info dt{color:#111827;font-weight:700}
+    .info dd{margin:0;text-align:right}
+    .cta-pink{display:block;width:100%;padding:14px;border-radius:999px;background:var(--brand);color:var(--brand-ink);text-align:center;font-weight:800;box-shadow:0 8px 24px rgba(239,84,107,.25)}
+    .cta-pink + .cta-pink{margin-top:12px}
+    .lang{margin-top:10px;display:flex;justify-content:flex-end}
+    .lang-btn{border:1px solid #cbd5e1;border-radius:12px;padding:10px 14px;background:#fff;display:flex;align-items:center;gap:8px;cursor:pointer}
+    .lang-menu{position:absolute;margin-top:8px;right:18px;border:1px solid #e5e7eb;border-radius:12px;background:#fff;display:none;min-width:180px;box-shadow:0 8px 24px rgba(2,6,23,.08)}
+    .lang-menu[aria-hidden="false"]{display:block}
+    .lang-item{padding:10px 12px;display:flex;align-items:center;gap:10px}
+    .lang-dot{width:10px;height:10px;border-radius:999px;background:#ef4444}
+    .lang-item:hover{background:#f8fafc}
+  </style>
+</head>
+<body>
+  <!-- ===== HEADER ===== -->
+  <header class="header" id="top">
+    <div class="header-wrap">
+      <a href="#home" class="brand">Etsunobu Nagai <span style="color:#94a3b8;font-weight:600">/ Digital Creator</span></a>
+      <nav aria-label="Primary">
+        <ul>
+          <li><a class="nav-link" href="#home">Home</a></li>
+          <li><a class="nav-link" href="#about">About</a></li>
+          <li><a class="nav-link" href="#works">Works</a></li>
+          <li><a class="nav-link" href="#blog">Blog</a></li>
+          <li><a class="nav-link" href="#contact">Contact</a></li>
+          <li><a class="cta" href="#contact" id="cta">お問い合わせ</a></li>
+        </ul>
+      </nav>
+      <button class="burger" id="burger" aria-controls="drawer" aria-expanded="false">Menu ▾</button>
+    </div>
+  </header>
+
+  <!-- ===== HERO ===== -->
+  <main id="home" class="section hero">
+    <div class="hero-bg" aria-hidden="true"></div>
+    <div class="container hero-grid">
+      <div>
+        <span class="pill" aria-hidden="true">マーケ × 実装</span>
+        <h1>価値を設計し、結果へ繋げる。総合デジタルクリエイター</h1>
+        <p>WEB / UIUX / ブランドの横断設計。戦略から実装まで一気通貫で伴走します。ドキュメントとデザインシステムで長期運用に強いサイトを構築します。</p>
+        <div style="margin-top:16px">
+          <a href="#works" class="btn primary">作品を見る</a>
+          <a href="#contact" class="btn">問い合わせる</a>
+        </div>
+      </div>
+      <div class="hero-img" aria-label="プロフィール画像">
+        <img src="img/hero1.png" alt="プロフィール写真" style="width:100%;height:100%;object-fit:cover;border-radius:24px;">
+      </div>
+    </div>
+  </main>
+
+  <!-- ===== ABOUT ===== -->
+  <section id="about" class="section">
+    <div class="container grid two" style="gap:32px">
+      <div>
+        <h2>Profile</h2>
+        <p>Etsunobu Nagai。福岡拠点のフリーランス総合デジタルクリエイター。経営〜バイアウトの実績経験を活かした戦略思考で、WEBサイト〜アプリ開発までフルスクラッチでの構築が可能。</p>
+        <p><a id="openProfile" class="btn" href="#profile">プロフィールを詳しく見る</a></p>
+      </div>
+      <div class="grid auto-2">
+        <div class="card">
+          <h3>強み</h3>
+          <ul class="list">
+            <li>戦略〜実装の一気通貫</li>
+            <li>SNSマーケティング</li>
+            <li>AIソリューション開発</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>対応範囲</h3>
+          <ul class="list">
+            <li>HP / LP / EC / Webアプリ</li>
+            <li>各種SNS運用 / 動画制作 / アプリ開発</li>
+            <li>業務自動化 / マーケティング / 広告運用</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== WORKS ===== -->
+  <section id="works" class="section">
+    <div class="container">
+      <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap">
+        <div>
+          <h2>Works</h2>
+          <p>制作実績の一部</p>
+        </div>
+        <div class="tabs" id="tabs" role="tablist" aria-label="カテゴリで絞り込み">
+          <button class="chip active" role="tab" aria-selected="true" data-filter="All">All</button>
+          <button class="chip" role="tab" data-filter="HP">HP</button>
+          <button class="chip" role="tab" data-filter="LP">LP</button>
+          <button class="chip" role="tab" data-filter="EC">EC</button>
+          <button class="chip" role="tab" data-filter="アプリ">アプリ</button>
+          <button class="chip" role="tab" data-filter="ロゴ">ロゴ</button>
+          <button class="chip" role="tab" data-filter="チラシ">チラシ</button>
+          <button class="chip" role="tab" data-filter="バナー">バナー</button>
+          <button class="chip" role="tab" data-filter="SNS">SNS</button>
+        </div>
+      </div>
+
+      <div class="work-grid" id="workGrid">
+        <!-- data-url を各カードに設定（ダミーURLは適宜差し替え） -->
+        <a class="work" href="#" data-tag="HP" data-url="https://ink-production-hero-bzayabl9z-nagais-projects-5022eddb.vercel.app">
+          <div class="work-thumb"><img src="img/nextjs-ec.png" alt="NEXT.js HP" style="width:100%;height:100%;object-fit:cover;">
+        </div>
+          <div class="work-body">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
+              <h3 style="margin:0;font-size:16px">NEXT.js</h3><span class="tag">コーポレートサイト（工事中）</span>
+            </div>
+          </div>
+        </a>
+        <a class="work" href="#" data-tag="HP" data-url="https://inkproduction1400-bot.github.io/iNK-PRODUCTION-/">
+          <div class="work-thumb"><img src="img/iNK.png" alt="NEXT.js HP" style="width:100%;height:100%;object-fit:cover;">
+        </div>
+          <div class="work-body">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
+              <h3 style="margin:0;font-size:16px">iNK PRODUCTION</h3><span class="tag">コーポレートサイト</span>
+            </div>
+          </div>
+        </a>
+        <a class="work" href="#" data-tag="LP" data-url="https://rainbow-smakager-88dc94.netlify.app">
+          <div class="work-thumb"><img src="img/AI-school.png" alt="NEXT.js LP兼予約サイト" style="width:100%;height:100%;object-fit:cover;">
+        </div>
+          <div class="work-body">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
+              <h3 style="margin:0;font-size:16px">AI-SCHOOL</h3><span class="tag">LP兼予約サイト</span>
+            </div>
+          </div>
+        </a>
+        <a class="work" href="#" data-tag="LP" data-url="https://www.kagakukoubou.com">
+          <div class="work-thumb"><img src="img/kagaku.png" alt="NEXT.js 予約サイト" style="width:100%;height:100%;object-fit:cover;">
+        </div>
+          <div class="work-body">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
+              <h3 style="margin:0;font-size:16px">教育事業</h3><span class="tag">予約サイト</span>
+            </div>
+          </div>
+        </a>
+        <a class="work" href="#" data-tag="アプリ" data-url="https://line-1xxj.bolt.host">
+          <div class="work-thumb"><img src="img/app1.png" alt="NEXT.js エンタメアプリ" style="width:100%;height:100%;object-fit:cover;">
+        </div>
+          <div class="work-body">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
+              <h3 style="margin:0;font-size:16px">エンタメアプリ</h3><span class="tag">バイブコーディング</span>
+            </div>
+          </div>
+        </a>
+        <a class="work" href="#" data-tag="アプリ" data-url="https://travel-navi-ui.vercel.app">
+          <div class="work-thumb"><img src="img/travel.png" alt="NEXT.js 旅行AIアプリ" style="width:100%;height:100%;object-fit:cover;">
+        </div>
+          <div class="work-body">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
+              <h3 style="margin:0;font-size:16px">旅行AIアプリ</h3><span class="tag">WEBアプリ（フロントのみ限定公開）</span>
+            </div>
+          </div>
+        </a>
+        <a class="work" href="#" data-tag="SNS" data-url="https://inkproduction1400-bot.github.io/tiktok-lp-demo/">
+          <div class="work-thumb"><img src="img/tiktok.png" alt="NEXT.js ECサイト" style="width:100%;height:100%;object-fit:cover;">
+        </div>
+          <div class="work-body">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
+              <h3 style="margin:0;font-size:16px">SNS運用</h3><span class="tag">TikTok設計・戦略</span>
+            </div>
+          </div>
+        </a>
+        <a class="work" href="#" data-tag="hp" data-url="https://ink-production-hero-bzayabl9z-nagais-projects-5022eddb.vercel.app">
+          <div class="work-thumb"><img src="img/nextjs-ec.png" alt="NEXT.js ECサイト" style="width:100%;height:100%;object-fit:cover;">
+        </div>
+          <div class="work-body">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
+              <h3 style="margin:0;font-size:16px">NEXT.js</h3><span class="tag">コーポレートサイト（開発途中）</span>
+            </div>
+          </div>
+        </a>
+        <a class="work" href="#" data-tag="hp" data-url="https://ink-production-hero-bzayabl9z-nagais-projects-5022eddb.vercel.app">
+          <div class="work-thumb"><img src="img/nextjs-ec.png" alt="NEXT.js ECサイト" style="width:100%;height:100%;object-fit:cover;">
+        </div>
+          <div class="work-body">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
+              <h3 style="margin:0;font-size:16px">NEXT.js</h3><span class="tag">コーポレートサイト（開発途中）</span>
+            </div>
+          </div>
+        </a>
+        <a class="work" href="#" data-tag="hp" data-url="https://ink-production-hero-bzayabl9z-nagais-projects-5022eddb.vercel.app">
+          <div class="work-thumb"><img src="img/nextjs-ec.png" alt="NEXT.js ECサイト" style="width:100%;height:100%;object-fit:cover;">
+        </div>
+          <div class="work-body">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
+              <h3 style="margin:0;font-size:16px">NEXT.js</h3><span class="tag">コーポレートサイト（開発途中）</span>
+            </div>
+          </div>
+        </a>
+        <a class="work" href="#" data-tag="hp" data-url="https://ink-production-hero-bzayabl9z-nagais-projects-5022eddb.vercel.app">
+          <div class="work-thumb"><img src="img/nextjs-ec.png" alt="NEXT.js ECサイト" style="width:100%;height:100%;object-fit:cover;">
+        </div>
+          <div class="work-body">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
+              <h3 style="margin:0;font-size:16px">NEXT.js</h3><span class="tag">コーポレートサイト（開発途中）</span>
+            </div>
+          </div>
+        </a>
+        <a class="work" href="#" data-tag="hp" data-url="https://ink-production-hero-bzayabl9z-nagais-projects-5022eddb.vercel.app">
+          <div class="work-thumb"><img src="img/nextjs-ec.png" alt="NEXT.js ECサイト" style="width:100%;height:100%;object-fit:cover;">
+        </div>
+          <div class="work-body">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
+              <h3 style="margin:0;font-size:16px">NEXT.js</h3><span class="tag">コーポレートサイト（開発途中）</span>
+            </div>
+          </div>
+        </a>
+      </div>
+
+      <div style="margin-top:16px;display:flex;justify-content:flex-end">
+        <a href="#" class="nav-link" style="text-decoration:underline;text-underline-offset:4px">作品をもっと見る</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== BLOG ===== -->
+  <section id="blog" class="section">
+    <div class="container">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:16px">
+        <h2>Blog</h2>
+        <a class="nav-link" href="#" style="text-decoration:underline;text-underline-offset:4px">すべて見る</a>
+      </div>
+      <div class="blog-grid">
+        <article class="article">
+          <div class="hero-16x9"><div class="ph" aria-hidden="true"></div></div>
+          <div class="article-body">
+            <h3 style="margin:0 0 .4rem">記事タイトル 01</h3>
+            <p>UIや制作の学び、プロセス、設計の考え方など。</p>
+          </div>
+        </article>
+        <article class="article">
+          <div class="hero-16x9"><div class="ph" aria-hidden="true"></div></div>
+          <div class="article-body">
+            <h3 style="margin:0 0 .4rem">記事タイトル 02</h3>
+            <p>UIや制作の学び、プロセス、設計の考え方など。</p>
+          </div>
+        </article>
+        <article class="article">
+          <div class="hero-16x9"><div class="ph" aria-hidden="true"></div></div>
+          <div class="article-body">
+            <h3 style="margin:0 0 .4rem">記事タイトル 03</h3>
+            <p>UIや制作の学び、プロセス、設計の考え方など。</p>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CONTACT ===== -->
+  <section id="contact" class="section">
+    <div class="container contact-grid">
+      <div>
+        <h2>Contact</h2>
+        <p>ご相談はお気軽に。要件・ご予算・納期の目安など分かる範囲でお知らせください。</p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px">
+          <a class="btn primary" href="mailto:hello@example.com">メールで問い合わせ</a>
+          <a class="btn" href="#" aria-disabled="true">お問い合わせフォーム</a>
+        </div>
+      </div>
+      <form onsubmit="event.preventDefault();" class="card" aria-label="お問い合わせフォーム">
+        <label>お名前<br><input class="input" placeholder="山田 太郎" required></label><br><br>
+        <label>メール<br><input type="email" class="input" placeholder="you@example.com" required></label><br><br>
+        <label>ご相談内容<br><textarea class="textarea" placeholder="要件・予算・納期など" required></textarea></label><br><br>
+        <button class="submit">送信する</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="footer">
+    <div class="container footer-wrap">
+      <small>© <span id="year"></span> えつのぶくん. All Rights Reserved.</small>
+      <div style="display:flex;gap:12px;align-items:center">
+        <a class="nav-link" href="mailto:hello@example.com">hello@example.com</a>
+        <a class="cta" href="#contact">お問い合わせ</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- === Work Preview Modal === -->
+  <div class="modal-backdrop" id="workModal" aria-hidden="true" role="dialog" aria-modal="true" aria-label="サイトプレビュー">
+    <div class="modal" role="document">
+      <div class="modal-header">
+        <div class="modal-title" id="modalTitle">Preview</div>
+        <div class="modal-actions">
+          <a id="openNewTab" class="modal-btn" href="#" target="_blank" rel="noopener">新しいタブで開く</a>
+          <button id="closeModal" class="modal-btn" type="button" aria-label="閉じる">閉じる ✕</button>
+        </div>
+      </div>
+      <div class="modal-body">
+        <iframe id="modalFrame" class="modal-iframe" src="about:blank" title="実績サイトのプレビュー" sandbox="allow-same-origin allow-scripts allow-forms allow-popups"></iframe>
+      </div>
+    </div>
+  </div>
+
+  <!-- === Profile Detail Sheet Modal === -->
+  <div class="profile-backdrop" id="profileModal" aria-hidden="true" role="dialog" aria-modal="true" aria-label="プロフィール詳細">
+    <div class="profile-sheet" role="document">
+      <div class="sheet-header">
+        <button class="sheet-close" id="closeProfile" type="button" aria-label="閉じる">閉じる ✕</button>
+        <!-- ここにサイトロゴ等を置いても良い -->
+      </div>
+      <div class="sheet-body">
+        <div class="avatar-wrap">
+          <img src="img/profile.png" alt="プロフィール写真（丸型）">
+          <span class="status-dot" aria-hidden="true"></span>
+        </div>
+        <div class="name">Etsunobu Nagai</div>
+        <div class="role">尽きない探究心で日々前進！</div>
+
+        <div class="dotted"></div>
+
+        <div class="sns" aria-label="SNSリンク">
+          <a href="#" aria-label="Instagram" title="Instagram">
+            <!-- Instagram SVG -->
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5Z" stroke="#e5e7eb" stroke-width="2"/><circle cx="12" cy="12" r="3.5" stroke="#e5e7eb" stroke-width="2"/><circle cx="17.5" cy="6.5" r="1" fill="#e5e7eb"/></svg>
+          </a>
+          <a href="#" aria-label="LINE" title="LINE">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 3c-5.5 0-10 3.6-10 8.1S6.5 19.2 12 19.2c.7 0 1.4-.1 2-.2l4 2.9-.8-4.3c2.7-1.5 4.8-4 4.8-6.7C22 6.6 17.5 3 12 3Z" stroke="#e5e7eb" stroke-width="2"/></svg>
+          </a>
+          <a href="#" aria-label="YouTube" title="YouTube">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="2" y="6" width="20" height="12" rx="3" stroke="#e5e7eb" stroke-width="2"/><path d="M10 9v6l5-3-5-3Z" fill="#e5e7eb"/></svg>
+          </a>
+          <a href="#" aria-label="Twitter" title="Twitter">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M22 5.8c-.7.3-1.5.6-2.3.7.8-.5 1.4-1.3 1.7-2.2-.8.5-1.7.9-2.7 1.1A4 4 0 0 0 12 9.3c0 .3 0 .6.1.8-3.3-.2-6.2-1.8-8.1-4.2-.4.6-.6 1.3-.6 2.1 0 1.4.8 2.6 1.9 3.3-.6 0-1.2-.2-1.7-.5 0 2 1.5 3.6 3.3 4-.4.1-.8.2-1.2.2-.3 0-.6 0-.9-.1a4.3 4.3 0 0 0 4 3c-1.5 1.2-3.4 1.9-5.4 1.9h-1C4.6 21.3 7 22 9.6 22 16 22 20.1 16.5 20.1 11v-.5c.8-.6 1.4-1.3 1.9-2.1Z" fill="#e5e7eb"/></svg>
+          </a>
+          <a href="#" aria-label="Facebook" title="Facebook">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M13 10h3V7h-3V6a2 2 0 0 1 2-2h1V1h-2a5 5 0 0 0-5 5v1H8v3h2v10h3V10Z" fill="#e5e7eb"/></svg>
+          </a>
+        </div>
+
+        <div class="dotted"></div>
+
+        <dl class="info">
+          <dt>出身地：</dt><dt>福岡県, 日本</dt>
+          <dt>誕生日：</dt><dt>1988/09/09（37）</dt>
+          <dt>居住地：</dt><dt>Fukuoka</dt>
+          <dt>スキル：</dt><dt>HTML5/CSS3/JavaScript(ES6+)/UI.UXデザイン/グラフィックデザイン/ブランド設計/SNSマーケティング戦略立案/Web広告運用/画像加工/AIソリューション開発/など</dt>
+          <dt>実績：</dt><dt>2019〜2023飲食店経営（売上700%UPでバイアウト）2024受託のSNS運用にて2週間で1.2億売上獲得達成(LTV換算)2025自身のTikTokアカウントを作成4日でミリオン再生+収益化達成</dt>
+        </dl>
+
+        <div style="margin-top:18px">
+          <a class="cta-pink" href="mailto:hello@example.com">お問い合わせ ✉️</a>
+          <a class="cta-pink" href="#" download>履歴書ダウンロード ⬇︎</a>
+        </div>
+
+        <div class="lang" style="position:relative">
+          <button id="langBtn" class="lang-btn" type="button" aria-haspopup="true" aria-expanded="false">
+            <span class="lang-dot" style="background:#ef4444"></span> 日本語 ▸
+          </button>
+          <div id="langMenu" class="lang-menu" aria-hidden="true">
+            <div class="lang-item"><span class="lang-dot"></span> 日本語</div>
+            <div class="lang-item"><span class="lang-dot" style="background:#22c55e"></span> English</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Year
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Mobile drawer
+    const burger = document.getElementById('burger');
+    burger?.addEventListener('click', () => {
+      const nav = document.querySelector('nav ul');
+      if(!nav) return;
+      const isOpen = getComputedStyle(nav).display !== 'none';
+      nav.style.display = isOpen ? 'none' : 'flex';
+      burger.setAttribute('aria-expanded', String(!isOpen));
+    });
+
+    // Smooth scroll
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', e => {
+        const href = a.getAttribute('href');
+        if(!href || href === '#') return;
+        const el = document.querySelector(href);
+        if(!el) return;
+        e.preventDefault();
+        el.scrollIntoView({behavior:'smooth',block:'start'});
+      });
+    });
+
+    // Works filtering
+    const grid = document.getElementById('workGrid');
+    const chips = Array.from(document.querySelectorAll('.chip'));
+    function applyFilter(tag){
+      const cards = Array.from(grid.querySelectorAll('.work'));
+      cards.forEach(card => {
+        const ctag = card.getAttribute('data-tag');
+        const visible = tag === 'All' || tag === ctag;
+        card.style.display = visible ? '' : 'none';
+      });
+    }
+    chips.forEach(ch => {
+      ch.addEventListener('click', () => {
+        chips.forEach(c => c.classList.remove('active'));
+        ch.classList.add('active');
+        const tag = ch.getAttribute('data-filter') || 'All';
+        applyFilter(tag);
+      });
+    });
+    applyFilter('All');
+
+    // ===== Work Preview Modal =====
+    (function(){
+      const modal = document.getElementById('workModal');
+      const frame = document.getElementById('modalFrame');
+      const titleEl = document.getElementById('modalTitle');
+      const openNewTab = document.getElementById('openNewTab');
+      const closeBtn = document.getElementById('closeModal');
+
+      function openModal({ url, title }) {
+        titleEl.textContent = title || 'Preview';
+        openNewTab.href = url;
+        frame.src = url;
+        modal.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+        closeBtn.focus();
+      }
+      function closeModal() {
+        modal.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+        frame.src = 'about:blank';
+      }
+
+      modal.addEventListener('click', (e)=>{ if(e.target === modal) closeModal(); });
+      closeBtn.addEventListener('click', closeModal);
+      window.addEventListener('keydown', (e)=>{ if(e.key === 'Escape') closeModal(); });
+
+      document.querySelectorAll('.work').forEach(card=>{
+        const url = card.getAttribute('data-url');
+        const tag = card.getAttribute('data-tag') || '';
+        const title = card.querySelector('h3')?.textContent || 'Preview';
+        if(!url) return;
+        card.addEventListener('click', (e)=>{
+          e.preventDefault();
+          openModal({ url, title: `${title} (${tag})` });
+        });
+      });
+
+      // フォールバック（X-Frame-Options 等）
+      frame.addEventListener('load', ()=>{
+        try {
+          const isEmpty = frame.contentWindow.location.href === 'about:blank';
+          if(isEmpty) throw new Error('about:blank');
+        } catch (err) {
+          frame.contentDocument?.open();
+          frame.contentDocument?.write(`
+            <style>body{margin:0;display:grid;place-items:center;height:100vh;background:#0b1220;color:#e5e7eb;font-family:system-ui,sans-serif}</style>
+            <div>
+              <p style="margin:0 0 8px">このサイトはセキュリティ設定により小窓表示（iframe）が禁止されている可能性が御座る。</p>
+              <p style="opacity:.8;margin:0 0 16px">「新しいタブで開く」をご利用くだされ。</p>
+              <a href="${openNewTab.href}" target="_top" style="color:#93c5fd;text-decoration:underline">新しいタブで開く</a>
+            </div>
+          `);
+          frame.contentDocument?.close();
+        }
+      });
+    })();
+
+    // ===== Profile Detail Sheet =====
+    (function(){
+      const openBtn = document.getElementById('openProfile');
+      const modal = document.getElementById('profileModal');
+      const closeBtn = document.getElementById('closeProfile');
+      const langBtn = document.getElementById('langBtn');
+      const langMenu = document.getElementById('langMenu');
+
+      function openSheet(){
+        modal.setAttribute('aria-hidden','false');
+        document.body.style.overflow = 'hidden';
+        closeBtn.focus();
+      }
+      function closeSheet(){
+        modal.setAttribute('aria-hidden','true');
+        document.body.style.overflow = '';
+      }
+
+      openBtn.addEventListener('click', (e)=>{ e.preventDefault(); openSheet(); });
+      closeBtn.addEventListener('click', closeSheet);
+      modal.addEventListener('click', (e)=>{ if(e.target === modal) closeSheet(); });
+      window.addEventListener('keydown', (e)=>{ if(e.key === 'Escape') closeSheet(); });
+
+      // 言語メニュー
+      langBtn.addEventListener('click', ()=>{
+        const expanded = langBtn.getAttribute('aria-expanded') === 'true';
+        langBtn.setAttribute('aria-expanded', String(!expanded));
+        langMenu.setAttribute('aria-hidden', String(expanded));
+      });
+      document.addEventListener('click', (e)=>{
+        if(!langBtn.contains(e.target) && !langMenu.contains(e.target)){
+          langBtn.setAttribute('aria-expanded','false');
+          langMenu.setAttribute('aria-hidden','true');
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
