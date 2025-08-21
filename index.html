@@ -12,6 +12,7 @@
     img{max-width:100%;display:block}
     a{color:inherit;text-decoration:none}
     button,input,textarea,select{font:inherit}
+
     /* ============ THEME TOKENS ============ */
     :root{
       --bg:#ffffff;
@@ -27,7 +28,7 @@
       --radius-lg:24px;
       --container:1160px;
       --space:clamp(40px,6vw,88px);
-      --brand:#ef546b;         /* ピンク系（CTA） */
+      --brand:#ef546b;         /* CTA */
       --brand-ink:#ffffff;
       --ink:#0b1220;
     }
@@ -40,6 +41,7 @@
     h2{font-size:clamp(22px,3vw,30px);font-weight:700}
     h3{font-size:clamp(18px,2.2vw,20px);font-weight:700}
     p{color:var(--muted);margin:0 0 1em}
+
     /* ============ HEADER ============ */
     .header{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.86);backdrop-filter:saturate(180%) blur(8px);border-bottom:1px solid var(--line)}
     .header-wrap{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;max-width:var(--container);margin-inline:auto}
@@ -50,6 +52,7 @@
     .nav-link{opacity:.9}
     .nav-link:hover{opacity:.6}
     .burger{display:none}
+
     /* ============ HERO ============ */
     .hero{position:relative;overflow:hidden}
     .hero-bg{position:absolute;inset:0;z-index:-1;background:
@@ -58,12 +61,53 @@
       radial-gradient(700px 350px at 60% 80%, #f8fafc 0%, transparent 60%);
     }
     .hero-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:32px;align-items:center}
-    .hero-img{aspect-ratio:1/1;border-radius:var(--radius-lg);background:#f1f5f9;box-shadow:inset 0 1px 0 rgba(0,0,0,.04)}
-    .pill{display:inline-flex;align-items:center;gap:.5rem;padding:.55rem 1rem;border-radius:999px;background:var(--fg);color:#fff;font-weight:600}
-    .btn{display:inline-flex;align-items:center;gap:.6rem;padding:.7rem 1.1rem;border-radius:999px;border:1px solid var(--fg);font-weight:600;transition:.2s}
+
+    /* 画像ボックス：光の走査演出を被せる（角丸に沿ってクリップ） */
+    .hero-img{
+      position:relative;aspect-ratio:1/1;border-radius:var(--radius-lg);
+      background:#f1f5f9;box-shadow:inset 0 1px 0 rgba(0,0,0,.04);
+      overflow:hidden; isolation:isolate;
+    }
+    .hero-img img{width:100%;height:100%;object-fit:cover;border-radius:inherit}
+    .hero-img::after{
+      content:"";position:absolute;inset:0;pointer-events:none;z-index:1;
+      background:linear-gradient(110deg, rgba(255,255,255,0) 0%, rgba(255,255,255,.45) 50%, rgba(255,255,255,0) 100%);
+      width:40%;height:120%;top:-10%;left:-60%;
+      transform:skewX(-20deg);
+      animation:heroShine 4.2s ease-in-out infinite;
+      filter:blur(1px);mix-blend-mode:screen;
+    }
+    @keyframes heroShine{
+      0%{left:-60%;opacity:0}8%{opacity:.85}50%{left:120%;opacity:.85}60%{opacity:0}100%{left:120%;opacity:0}
+    }
+
+    /* pill（バッジ）→ 赤系グラデーション */
+    .pill{
+      display:inline-flex;align-items:center;gap:.5rem;padding:.55rem 1rem;border-radius:999px;
+      background:linear-gradient(135deg,#f43f5e 0%, #ef546b 45%, #fb7185 100%);
+      color:#fff;font-weight:800;letter-spacing:.02em;box-shadow:0 8px 28px rgba(239,84,107,.25) inset;
+    }
+
+    /* 既存の .btn は残しつつ、アニメ化のために .btn-86 を共通利用 */
+    .btn{display:inline-flex;align-items:center;gap:.6rem;border-radius:999px;border:1px solid var(--fg);font-weight:600;transition:.2s}
     .btn.primary{background:var(--fg);color:#fff;border-color:transparent}
     .btn:hover{transform:translateY(-1px);box-shadow:var(--shadow)}
     .btn + .btn{margin-left:.6rem}
+
+    /* --- タイプライター演出（見出し） --- */
+    .typewriter{position:relative}
+    .typewriter::after{content:"";display:inline-block;width:1px;height:1em;background:var(--fg);margin-left:6px;vertical-align:-0.1em;animation:caretBlink 1s step-end infinite}
+    .typewriter.done::after{animation:caretSoft 1.2s ease-in forwards}
+    @keyframes caretBlink{50%{opacity:0}}
+    @keyframes caretSoft{to{opacity:.25}}
+
+    /* ロゴ群（ヒーロー/Works下 共通） */
+    .logo-row{display:flex;flex-wrap:wrap;justify-content:center;gap:20px;margin-top:24px}
+    .logo-row img{max-height:40px;width:auto;object-fit:contain;opacity:.9;position:relative;display:inline-block;overflow:hidden}
+    .logo-row img::after{content:"";position:absolute;top:0;left:-75%;width:50%;height:100%;background:linear-gradient(120deg,rgba(255,255,255,0) 0%,rgba(255,255,255,.6) 50%,rgba(255,255,255,0) 100%);transform:skewX(-20deg);animation:shine 3s infinite}
+    @keyframes shine{0%{left:-75%}50%,100%{left:125%}}
+    @media(max-width:640px){.logo-row img{max-height:28px}}
+
     /* ============ PROFILE CARDS ============ */
     .grid{display:grid;gap:20px}
     .grid.two{grid-template-columns:2fr 3fr}
@@ -71,6 +115,45 @@
     .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:22px}
     .list{padding-left:1.2em}
     .list li{margin:.35em 0;color:var(--muted)}
+
+    /* === Profile Button Animation (base) === */
+    .btn-86, .btn-86 *, .btn-86 :after, .btn-86 :before, .btn-86:after, .btn-86:before{border:0 solid;box-sizing:border-box}
+    .btn-86{
+      -webkit-tap-highlight-color:transparent;-webkit-appearance:button;
+      background-color:#000;background-image:none;color:#fff;cursor:pointer;
+      font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica Neue,Arial,Noto Sans,sans-serif;
+      font-size:100%;font-weight:900;line-height:1.2;margin:0;-webkit-mask-image:-webkit-radial-gradient(#000,#fff);
+      border:1px solid;border-radius:999px;display:inline-grid;place-items:center;overflow:hidden;
+      padding:.9rem 1.6rem;position:relative;text-transform:uppercase;white-space:nowrap;gap:.06em;
+    }
+    .btn-86 .fallback{display:none}
+    .btn-86 .letters{display:flex;gap:.06em}
+    .btn-86 span{display:inline-block;mix-blend-mode:difference;position:relative}
+    .btn-86 span:first-child,.btn-86 span:nth-child(6){--mov:0;--rot:1}
+    .btn-86 span:nth-child(2),.btn-86 span:nth-child(5){--mov:1/3;--rot:2/3}
+    .btn-86 span:nth-child(3),.btn-86 span:nth-child(4){--mov:2/3;--rot:1/3}
+    .btn-86:hover span{animation:dance .7s linear .18s forwards}
+    @keyframes dance{30%,36%{transform:translateY(calc(-6px*var(--mov))) rotate(calc(-13deg*var(--rot)))}50%{transform:translateY(calc(3px*var(--mov))) rotate(calc(6deg*var(--rot)))}70%{transform:translateY(calc(-2px*var(--mov))) rotate(calc(-3deg*var(--rot)))}}
+    .btn-86:after,.btn-86:before{
+      background:#000;content:"";height:100%;left:0;position:absolute;top:100%;
+      transition:transform .2s cubic-bezier(.76,0,.24,1);width:100%;will-change:transform;z-index:-1;
+    }
+    .btn-86:hover:after,.btn-86:hover:before{transform:translateY(-100%)}
+    .btn-86:after{background:#fff;transition-delay:.13s}
+
+    /* バリエーション（ヘッダー内はコンパクト） */
+    .header .btn-86{padding:.55rem .9rem;font-weight:700}
+
+    /* brand色のボタン（ピンクCTA・送信など） */
+    .btn-86.cta-pink, .cta-pink.btn-86{
+      background:var(--brand);color:var(--brand-ink);border-color:transparent;
+    }
+    .btn-86.cta-pink:before{background:var(--brand)}
+    .btn-86.cta-pink:after{background:#fff}
+
+    /* 既存 .cta / .btn / .submit も .btn-86 を併用可能に */
+    .submit.btn-86{width:100%}
+
     /* ============ WORKS ============ */
     .tabs{display:flex;flex-wrap:wrap;gap:10px}
     .chip{padding:.5rem .9rem;border-radius:999px;border:1px solid var(--fg);background:transparent;cursor:pointer;font-weight:600}
@@ -81,20 +164,24 @@
     .work-thumb{aspect-ratio:4/3;background:#f1f5f9}
     .work-body{padding:14px}
     .tag{font-size:12px;background:var(--chip);border-radius:999px;padding:.2rem .55rem}
+
     /* ============ BLOG ============ */
     .blog-grid{display:grid;gap:18px;grid-template-columns:repeat(3,minmax(0,1fr));margin-top:18px}
     .article{border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:#fff;transition:box-shadow .2s}
     .article:hover{box-shadow:var(--shadow)}
     .hero-16x9{aspect-ratio:16/9;background:#f1f5f9}
     .article-body{padding:16px}
+
     /* ============ CONTACT ============ */
     .contact-grid{display:grid;gap:28px;grid-template-columns:1fr 1fr;align-items:start}
     .input,.textarea{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:#fff}
     .textarea{min-height:140px;resize:vertical}
-    .submit{width:100%;padding:12px;border:none;border-radius:12px;background:var(--fg);color:#fff;font-weight:700;cursor:pointer}
+    .submit{border:none;border-radius:12px;background:var(--fg);color:#fff;font-weight:700;cursor:pointer}
+
     /* ============ FOOTER ============ */
     .footer{border-top:1px solid var(--line)}
     .footer-wrap{display:flex;gap:16px;align-items:center;justify-content:space-between;padding:20px}
+
     /* ============ RESPONSIVE ============ */
     @media (max-width: 980px){
       .hero-grid{grid-template-columns:1fr}
@@ -108,6 +195,7 @@
     @media (max-width: 640px){
       .blog-grid,.work-grid{grid-template-columns:1fr}
     }
+
     /* Placeholder image (fine checker) */
     .ph{
       width:100%;height:100%;
@@ -120,10 +208,7 @@
     }
 
     /* --- Modal (lightbox preview) for Works --- */
-    .modal-backdrop{
-      position:fixed;inset:0;background:rgba(2,6,23,.55);
-      display:none;align-items:center;justify-content:center;z-index:1000;
-    }
+    .modal-backdrop{position:fixed;inset:0;background:rgba(2,6,23,.55);display:none;align-items:center;justify-content:center;z-index:1000}
     .modal-backdrop[aria-hidden="false"]{display:flex}
     .modal{
       width:min(96vw,1200px);height:min(90vh,760px);
@@ -131,16 +216,10 @@
       box-shadow:0 20px 60px rgba(0,0,0,.35);
       display:grid;grid-template-rows:auto 1fr;
     }
-    .modal-header{
-      display:flex;align-items:center;justify-content:space-between;
-      padding:10px 12px;background:#0b1220;color:#e5e7eb;border-bottom:1px solid #1f2937;
-    }
+    .modal-header{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:#0b1220;color:#e5e7eb;border-bottom:1px solid #1f2937}
     .modal-title{font-weight:700;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .modal-actions{display:flex;gap:8px}
-    .modal-btn{
-      border:1px solid #334155;background:#111827;color:#e5e7eb;
-      padding:6px 10px;border-radius:10px;cursor:pointer;
-    }
+    .modal-btn{border:1px solid #334155;background:#111827;color:#e5e7eb;padding:6px 10px;border-radius:10px;cursor:pointer}
     .modal-btn:hover{background:#1f2937}
     .modal-body{position:relative}
     .modal-iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:#0b1220}
@@ -159,9 +238,7 @@
     .sheet-body{padding:8px 8px 0}
     .avatar-wrap{width:120px;height:120px;border-radius:999px;background:#fff;box-shadow:0 6px 20px rgba(2,6,23,.1);margin:10px auto;position:relative}
     .avatar-wrap img{width:100%;height:100%;object-fit:cover;border-radius:999px}
-    .status-dot{
-      position:absolute;right:6px;bottom:6px;width:20px;height:20px;border-radius:999px;background:var(--brand);border:4px solid #fff;box-shadow:0 2px 6px rgba(239,84,107,.35)
-    }
+    .status-dot{position:absolute;right:6px;bottom:6px;width:20px;height:20px;border-radius:999px;background:var(--brand);border:4px solid #fff;box-shadow:0 2px 6px rgba(239,84,107,.35)}
     .name{font-size:28px;font-weight:800;color:#0b1220;text-align:center;margin-top:6px}
     .role{color:#6b7280;text-align:center;margin:6px 0 14px}
     .dotted{height:1px;border-bottom:2px dotted #e5e7eb;margin:18px 0}
@@ -193,7 +270,11 @@
           <li><a class="nav-link" href="#works">Works</a></li>
           <li><a class="nav-link" href="#blog">Blog</a></li>
           <li><a class="nav-link" href="#contact">Contact</a></li>
-          <li><a class="cta" href="#contact" id="cta">お問い合わせ</a></li>
+          <li>
+            <a class="cta btn-86" href="#contact" id="cta" aria-label="お問い合わせ">
+              <span class="letters"><span>お</span><span>問</span><span>い</span><span>合</span><span>わ</span><span>せ</span></span>
+            </a>
+          </li>
         </ul>
       </nav>
       <button class="burger" id="burger" aria-controls="drawer" aria-expanded="false">Menu ▾</button>
@@ -206,15 +287,26 @@
     <div class="container hero-grid">
       <div>
         <span class="pill" aria-hidden="true">マーケ × 実装</span>
-        <h1>価値を設計し、結果へ繋げる。総合デジタルクリエイター</h1>
+        <h1 id="heroTitle" class="typewriter" aria-live="polite">価値を設計し、結果へ繋げる。総合デジタルクリエイター</h1>
         <p>WEB / UIUX / ブランドの横断設計。戦略から実装まで一気通貫で伴走します。ドキュメントとデザインシステムで長期運用に強いサイトを構築します。</p>
         <div style="margin-top:16px">
-          <a href="#works" class="btn primary">作品を見る</a>
-          <a href="#contact" class="btn">問い合わせる</a>
+          <a href="#works" class="btn-86" aria-label="作品を見る">
+            <span class="letters"><span>作</span><span>品</span><span>を</span><span>見</span><span>る</span></span>
+          </a>
+          <a href="#contact" class="btn-86" aria-label="問い合わせる" style="margin-left:.6rem">
+            <span class="letters"><span>問</span><span>い</span><span>合</span><span>わ</span><span>せ</span><span>る</span></span>
+          </a>
+        </div>
+        <!-- ロゴ群（ヒーロー内） -->
+        <div class="logo-row">
+          <img src="img/1.png" alt="Logo1"><img src="img/2.png" alt="Logo2"><img src="img/3.png" alt="Logo3">
+          <img src="img/4.png" alt="Logo4"><img src="img/5.png" alt="Logo5"><img src="img/6.png" alt="Logo6">
+          <img src="img/7.png" alt="Logo7"><img src="img/8.png" alt="Logo8"><img src="img/9.png" alt="Logo9">
+          <img src="img/10.png" alt="Logo10"><img src="img/11.png" alt="Logo11">
         </div>
       </div>
       <div class="hero-img" aria-label="プロフィール画像">
-        <img src="img/hero1.png" alt="プロフィール写真" style="width:100%;height:100%;object-fit:cover;border-radius:24px;">
+        <img src="img/hero1.png" alt="プロフィール写真">
       </div>
     </div>
   </main>
@@ -225,7 +317,11 @@
       <div>
         <h2>Profile</h2>
         <p>Etsunobu Nagai。福岡拠点のフリーランス総合デジタルクリエイター。経営〜バイアウトの実績経験を活かした戦略思考で、WEBサイト〜アプリ開発までフルスクラッチでの構築が可能。</p>
-        <p><a id="openProfile" class="btn" href="#profile">プロフィールを詳しく見る</a></p>
+        <p>
+          <a id="openProfile" class="btn-86" href="#profile" aria-label="プロフィールを詳しく見る">
+            <span class="letters"><span>プ</span><span>ロ</span><span>フ</span><span>ィ</span><span>ー</span><span>ル</span></span>
+          </a>
+        </p>
       </div>
       <div class="grid auto-2">
         <div class="card">
@@ -270,128 +366,71 @@
       </div>
 
       <div class="work-grid" id="workGrid">
-        <!-- data-url を各カードに設定（ダミーURLは適宜差し替え） -->
+        <!-- data-url を各カードに設定 -->
         <a class="work" href="#" data-tag="HP" data-url="https://ink-production-hero-bzayabl9z-nagais-projects-5022eddb.vercel.app">
-          <div class="work-thumb"><img src="img/nextjs-ec.png" alt="NEXT.js HP" style="width:100%;height:100%;object-fit:cover;">
-        </div>
-          <div class="work-body">
-            <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
-              <h3 style="margin:0;font-size:16px">NEXT.js</h3><span class="tag">コーポレートサイト（工事中）</span>
-            </div>
-          </div>
+          <div class="work-thumb"><img src="img/nextjs-ec.png" alt="NEXT.js HP" style="width:100%;height:100%;object-fit:cover;"></div>
+          <div class="work-body"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><h3 style="margin:0;font-size:16px">NEXT.js</h3><span class="tag">コーポレートサイト（工事中）</span></div></div>
         </a>
         <a class="work" href="#" data-tag="HP" data-url="https://inkproduction1400-bot.github.io/iNK-PRODUCTION-/">
-          <div class="work-thumb"><img src="img/iNK.png" alt="NEXT.js HP" style="width:100%;height:100%;object-fit:cover;">
-        </div>
-          <div class="work-body">
-            <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
-              <h3 style="margin:0;font-size:16px">iNK PRODUCTION</h3><span class="tag">コーポレートサイト</span>
-            </div>
-          </div>
+          <div class="work-thumb"><img src="img/iNK.png" alt="iNK PRODUCTION サイト" style="width:100%;height:100%;object-fit:cover;"></div>
+          <div class="work-body"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><h3 style="margin:0;font-size:16px">iNK PRODUCTION</h3><span class="tag">コーポレートサイト</span></div></div>
         </a>
         <a class="work" href="#" data-tag="LP" data-url="https://rainbow-smakager-88dc94.netlify.app">
-          <div class="work-thumb"><img src="img/AI-school.png" alt="NEXT.js LP兼予約サイト" style="width:100%;height:100%;object-fit:cover;">
-        </div>
-          <div class="work-body">
-            <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
-              <h3 style="margin:0;font-size:16px">AI-SCHOOL</h3><span class="tag">LP兼予約サイト</span>
-            </div>
-          </div>
+          <div class="work-thumb"><img src="img/AI-school.png" alt="AI-SCHOOL LP兼予約サイト" style="width:100%;height:100%;object-fit:cover;"></div>
+          <div class="work-body"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><h3 style="margin:0;font-size:16px">AI-SCHOOL</h3><span class="tag">LP兼予約サイト</span></div></div>
         </a>
         <a class="work" href="#" data-tag="LP" data-url="https://www.kagakukoubou.com">
-          <div class="work-thumb"><img src="img/kagaku.png" alt="NEXT.js 予約サイト" style="width:100%;height:100%;object-fit:cover;">
-        </div>
-          <div class="work-body">
-            <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
-              <h3 style="margin:0;font-size:16px">教育事業</h3><span class="tag">予約サイト</span>
-            </div>
-          </div>
+          <div class="work-thumb"><img src="img/kagaku.png" alt="教育事業 予約サイト" style="width:100%;height:100%;object-fit:cover;"></div>
+          <div class="work-body"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><h3 style="margin:0;font-size:16px">教育事業</h3><span class="tag">予約サイト</span></div></div>
         </a>
         <a class="work" href="#" data-tag="アプリ" data-url="https://line-1xxj.bolt.host">
-          <div class="work-thumb"><img src="img/app1.png" alt="NEXT.js エンタメアプリ" style="width:100%;height:100%;object-fit:cover;">
-        </div>
-          <div class="work-body">
-            <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
-              <h3 style="margin:0;font-size:16px">エンタメアプリ</h3><span class="tag">バイブコーディング</span>
-            </div>
-          </div>
+          <div class="work-thumb"><img src="img/app1.png" alt="エンタメアプリ" style="width:100%;height:100%;object-fit:cover;"></div>
+          <div class="work-body"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><h3 style="margin:0;font-size:16px">エンタメアプリ</h3><span class="tag">バイブコーディング</span></div></div>
         </a>
         <a class="work" href="#" data-tag="アプリ" data-url="https://travel-navi-ui.vercel.app">
-          <div class="work-thumb"><img src="img/travel.png" alt="NEXT.js 旅行AIアプリ" style="width:100%;height:100%;object-fit:cover;">
-        </div>
-          <div class="work-body">
-            <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
-              <h3 style="margin:0;font-size:16px">旅行AIアプリ</h3><span class="tag">WEBアプリ（フロントのみ限定公開）</span>
-            </div>
-          </div>
+          <div class="work-thumb"><img src="img/travel.png" alt="旅行AIアプリ" style="width:100%;height:100%;object-fit:cover;"></div>
+          <div class="work-body"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><h3 style="margin:0;font-size:16px">旅行AIアプリ</h3><span class="tag">WEBアプリ（フロントのみ限定公開）</span></div></div>
         </a>
         <a class="work" href="#" data-tag="SNS" data-url="https://inkproduction1400-bot.github.io/tiktok-lp-demo/">
-          <div class="work-thumb"><img src="img/tiktok.png" alt="NEXT.js ECサイト" style="width:100%;height:100%;object-fit:cover;">
-        </div>
-          <div class="work-body">
-            <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
-              <h3 style="margin:0;font-size:16px">SNS運用</h3><span class="tag">TikTok設計・戦略</span>
-            </div>
-          </div>
+          <div class="work-thumb"><img src="img/tiktok.png" alt="TikTok設計・戦略" style="width:100%;height:100%;object-fit:cover;"></div>
+          <div class="work-body"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><h3 style="margin:0;font-size:16px">SNS運用</h3><span class="tag">TikTok設計・戦略</span></div></div>
         </a>
         <a class="work" href="#" data-tag="アプリ" data-url="https://inkproduction1400-bot.github.io/-contact-AI/">
-          <div class="work-thumb"><img src="img/ contact-AI.png" alt="NEXT.js ECサイト" style="width:100%;height:100%;object-fit:cover;">
-        </div>
-          <div class="work-body">
-            <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
-              <h3 style="margin:0;font-size:16px">自動メール応対</h3><span class="tag">AIソリューション開発</span>
-            </div>
-          </div>
+          <div class="work-thumb"><img src="img/contact-AI.png" alt="自動メール応対 AIソリューション" style="width:100%;height:100%;object-fit:cover;"></div>
+          <div class="work-body"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><h3 style="margin:0;font-size:16px">自動メール応対</h3><span class="tag">AIソリューション開発</span></div></div>
         </a>
         <a class="work" href="#" data-tag="HP" data-url="https://inkproduction1400-bot.github.io/animation-LP/">
-          <div class="work-thumb"><img src="img/animationLP.png" alt="NEXT.js ECサイト" style="width:100%;height:100%;object-fit:cover;">
-        </div>
-          <div class="work-body">
-            <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
-              <h3 style="margin:0;font-size:16px">ロゴ・アニメーション</h3><span class="tag">Adobe AE</span>
-            </div>
-          </div>
+          <div class="work-thumb"><img src="img/animationLP.png" alt="ロゴ・アニメーション Adobe AE" style="width:100%;height:100%;object-fit:cover;"></div>
+          <div class="work-body"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><h3 style="margin:0;font-size:16px">ロゴ・アニメーション</h3><span class="tag">Adobe AE</span></div></div>
         </a>
         <a class="work" href="#" data-tag="アプリ" data-url="https://inkproduction1400-bot.github.io/oniyome/">
-          <div class="work-thumb"><img src="img/oniyome.png" alt="NEXT.js ECサイト" style="width:100%;height:100%;object-fit:cover;">
-        </div>
-          <div class="work-body">
-            <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
-              <h3 style="margin:0;font-size:16px">ゲーム</h3><span class="tag">フルAI駆動開発</span>
-            </div>
-          </div>
+          <div class="work-thumb"><img src="img/oniyome.png" alt="ゲーム フルAI駆動開発" style="width:100%;height:100%;object-fit:cover;"></div>
+          <div class="work-body"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><h3 style="margin:0;font-size:16px">ゲーム</h3><span class="tag">フルAI駆動開発</span></div></div>
         </a>
         <a class="work" href="#" data-tag="アプリ" data-url="https://banso-kun-dx-5hpm.vercel.app">
-          <div class="work-thumb"><img src="img/BansoKunDX.png" alt="NEXT.js ECサイト" style="width:100%;height:100%;object-fit:cover;">
-        </div>
-          <div class="work-body">
-            <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
-              <h3 style="margin:0;font-size:16px">SNS伴走型運用アプリ</h3><span class="tag">SaaS</span>
-            </div>
-          </div>
+          <div class="work-thumb"><img src="img/BansoKunDX.png" alt="SNS伴走型運用アプリ SaaS" style="width:100%;height:100%;object-fit:cover;"></div>
+          <div class="work-body"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><h3 style="margin:0;font-size:16px">SNS伴走型運用アプリ</h3><span class="tag">SaaS</span></div></div>
         </a>
         <a class="work" href="#" data-tag="HP" data-url="https://inkproduction1400-bot.github.io/demosite/">
-          <div class="work-thumb"><img src="img/demosite.png" alt="NEXT.js ECサイト" style="width:100%;height:100%;object-fit:cover;">
-        </div>
-          <div class="work-body">
-            <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
-              <h3 style="margin:0;font-size:16px">コーポレートサイト</h3><span class="tag">企業サイト</span>
-            </div>
-          </div>
+          <div class="work-thumb"><img src="img/demosite.png" alt="企業向けコーポレートサイト" style="width:100%;height:100%;object-fit:cover;"></div>
+          <div class="work-body"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><h3 style="margin:0;font-size:16px">コーポレートサイト</h3><span class="tag">企業サイト</span></div></div>
         </a>
-        <a class="work" href="#" data-tag="hp" data-url="https://ink-production-hero-bzayabl9z-nagais-projects-5022eddb.vercel.app">
-          <div class="work-thumb"><img src="img/coming.png" alt="NEXT.js ECサイト" style="width:100%;height:100%;object-fit:cover;">
-        </div>
-          <div class="work-body">
-            <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
-              <h3 style="margin:0;font-size:16px">現在準備中</h3><span class="tag">現在準備中</span>
-            </div>
-          </div>
+        <a class="work" href="#" data-tag="HP" data-url="https://ink-production-hero-bzayabl9z-nagais-projects-5022eddb.vercel.app">
+          <div class="work-thumb"><img src="img/coming.png" alt="現在準備中" style="width:100%;height:100%;object-fit:cover;"></div>
+          <div class="work-body"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><h3 style="margin:0;font-size:16px">現在準備中</h3><span class="tag">現在準備中</span></div></div>
         </a>
       </div>
 
       <div style="margin-top:16px;display:flex;justify-content:flex-end">
         <a href="#" class="nav-link" style="text-decoration:underline;text-underline-offset:4px">作品をもっと見る</a>
+      </div>
+
+      <!-- ロゴ群（Works セクション末尾） -->
+      <div class="logo-row">
+        <img src="img/1.png" alt="Logo1"><img src="img/2.png" alt="Logo2"><img src="img/3.png" alt="Logo3">
+        <img src="img/4.png" alt="Logo4"><img src="img/5.png" alt="Logo5"><img src="img/6.png" alt="Logo6">
+        <img src="img/7.png" alt="Logo7"><img src="img/8.png" alt="Logo8"><img src="img/9.png" alt="Logo9">
+        <img src="img/10.png" alt="Logo10"><img src="img/11.png" alt="Logo11">
       </div>
     </div>
   </section>
@@ -436,15 +475,21 @@
         <h2>Contact</h2>
         <p>ご相談はお気軽に。要件・ご予算・納期の目安など分かる範囲でお知らせください。</p>
         <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px">
-          <a class="btn primary" href="mailto:hello@example.com">メールで問い合わせ</a>
-          <a class="btn" href="#" aria-disabled="true">お問い合わせフォーム</a>
+          <a class="btn-86" href="mailto:hello@example.com" aria-label="メールで問い合わせ">
+            <span class="letters"><span>メ</span><span>ー</span><span>ル</span><span>で</span><span>問</span><span>い</span><span>合</span><span>わ</span><span>せ</span></span>
+          </a>
+          <a class="btn-86" href="#" aria-disabled="true" aria-label="お問い合わせフォーム">
+            <span class="letters"><span>お</span><span>問</span><span>い</span><span>合</span><span>わ</span><span>せ</span><span>フ</span><span>ォ</span><span>ー</span><span>ム</span></span>
+          </a>
         </div>
       </div>
       <form onsubmit="event.preventDefault();" class="card" aria-label="お問い合わせフォーム">
         <label>お名前<br><input class="input" placeholder="山田 太郎" required></label><br><br>
         <label>メール<br><input type="email" class="input" placeholder="you@example.com" required></label><br><br>
         <label>ご相談内容<br><textarea class="textarea" placeholder="要件・予算・納期など" required></textarea></label><br><br>
-        <button class="submit">送信する</button>
+        <button class="submit btn-86" type="submit" aria-label="送信する">
+          <span class="letters"><span>送</span><span>信</span><span>す</span><span>る</span></span>
+        </button>
       </form>
     </div>
   </section>
@@ -455,7 +500,9 @@
       <small>© <span id="year"></span> Etsunobu Nagai. All Rights Reserved.</small>
       <div style="display:flex;gap:12px;align-items:center">
         <a class="nav-link" href="mailto:ink.production1400@gmail.com">ink.production1400@gmail.com</a>
-        <a class="cta" href="#contact">お問い合わせ</a>
+        <a class="cta btn-86" href="#contact" aria-label="お問い合わせ">
+          <span class="letters"><span>お</span><span>問</span><span>い</span><span>合</span><span>わ</span><span>せ</span></span>
+        </a>
       </div>
     </div>
   </footer>
@@ -481,7 +528,6 @@
     <div class="profile-sheet" role="document">
       <div class="sheet-header">
         <button class="sheet-close" id="closeProfile" type="button" aria-label="閉じる">閉じる ✕</button>
-        <!-- ここにサイトロゴ等を置いても良い -->
       </div>
       <div class="sheet-body">
         <div class="avatar-wrap">
@@ -495,7 +541,6 @@
 
         <div class="sns" aria-label="SNSリンク">
           <a href="#" aria-label="Instagram" title="Instagram">
-            <!-- Instagram SVG -->
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5Z" stroke="#e5e7eb" stroke-width="2"/><circle cx="12" cy="12" r="3.5" stroke="#e5e7eb" stroke-width="2"/><circle cx="17.5" cy="6.5" r="1" fill="#e5e7eb"/></svg>
           </a>
           <a href="#" aria-label="LINE" title="LINE">
@@ -523,8 +568,12 @@
         </dl>
 
         <div style="margin-top:18px">
-          <a class="cta-pink" href="mailto:ink.production1400@gmail.com">お問い合わせ ✉️</a>
-          <a class="cta-pink" href="files/resume_jp.pdf" download="Etsunobu_Nagai_Resume_JP.pdf">履歴書ダウンロード ⬇︎</a>
+          <a class="cta-pink btn-86" href="mailto:ink.production1400@gmail.com">
+            <span class="letters"><span>お</span><span>問</span><span>い</span><span>合</span><span>わ</span><span>せ</span></span> ✉️
+          </a>
+          <a class="cta-pink btn-86" href="files/resume_jp.pdf" download="Etsunobu_Nagai_Resume_JP.pdf">
+            <span class="letters"><span>履</span><span>歴</span><span>書</span></span> ⬇︎
+          </a>
         </div>
 
         <div class="lang" style="position:relative">
@@ -566,7 +615,31 @@
       });
     });
 
-    // Works filtering
+    // ===== Typewriter for Hero Title =====
+    (function(){
+      const el = document.getElementById('heroTitle');
+      if(!el) return;
+      const full = el.textContent.trim();
+      el.textContent = '';
+      let i = 0;
+      function delayFor(idx){ if(idx<4) return 120; return 40 + Math.random()*80; }
+      function tick(){
+        if(i <= full.length){
+          el.textContent = full.slice(0, i);
+          i++;
+          setTimeout(tick, delayFor(i));
+        }else{ el.classList.add('done'); }
+      }
+      const start = () => { setTimeout(tick, 200); };
+      if('IntersectionObserver' in window){
+        const io = new IntersectionObserver((entries)=>{
+          if(entries.some(e=>e.isIntersecting)){ start(); io.disconnect(); }
+        }, {threshold:.6});
+        io.observe(el);
+      }else{ start(); }
+    })();
+
+    // ===== Works filtering
     const grid = document.getElementById('workGrid');
     const chips = Array.from(document.querySelectorAll('.chip'));
     function applyFilter(tag){
